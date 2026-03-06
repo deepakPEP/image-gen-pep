@@ -29,3 +29,7 @@ export const api = axios.create({
   baseURL: API_BASE_URL.replace(/\/$/, ""),
   headers: API_KEY ? { "X-API-Key": API_KEY } : {},
 });
+
+export const LOGIN_SECRET = (
+  import.meta.env.VITE_LOGIN_SECRET as string | undefined
+)?.trim() || "";
