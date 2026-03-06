@@ -1,6 +1,5 @@
 import { useState, useRef, useEffect } from "react"
-import axios from "axios"
-import { apiUrl } from "../config"
+import { api } from "../config"
 import "./MessageInput.css"
 
 interface ReplyToPayload {
@@ -59,7 +58,7 @@ form.append("prompt",text)
 
 if(file) form.append("file",file)
 
-    await axios.post(apiUrl("/chat"), form)
+    await api.post("/chat", form)
 
 setText("")
 setFile(null)

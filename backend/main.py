@@ -1,5 +1,6 @@
 from fastapi import FastAPI, UploadFile, File, Form
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
 import os
 from dotenv import load_dotenv
 from chat_service import ask_gemini
@@ -8,6 +9,9 @@ from s3_chat_storage import load_history, save_history, list_chats as s3_list_ch
 load_dotenv()
 
 app = FastAPI()
+
+# Optional API key: when set, all requests must send X-API-Key header matching this value
+API_KEY = (os.getenv("API_KEY") or "").strip()
 
 # CORS: allow frontend origin from API_BASE_URL (e.g. http://localhost:8080)
 FRONTEND_ORIGIN = os.getenv("API_BASE_URL", "http://localhost:8080").rstrip("/")
@@ -22,6 +26,20 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+
+@app.middleware("http")
+async def validate_api_key(request, call_next):
+    """If API_KEY is set, require X-API-Key header to match. Skip OPTIONS (CORS preflight)."""
+    if request.method == "OPTIONS" or not API_KEY:
+        return await call_next(request)
+    key = request.headers.get("X-API-Key", "").strip()
+    if key != API_KEY:
+        return JSONResponse(
+            status_code=401,
+            content={"detail": "Invalid or missing API key"},
+        )
+    return await call_next(request)
 
 
 @app.get("/chats")

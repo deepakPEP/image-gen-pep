@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
-import { apiUrl } from "../config";
+import { api } from "../config";
 import "./ChatSidebar.css";
 
 interface ChatSidebarProps {
@@ -34,7 +33,7 @@ useEffect(() => {
 }, [refreshTrigger])
 
 const loadChats = async ()=>{
- const res = await axios.get(apiUrl("/chats"))
+ const res = await api.get("/chats")
  setChats(res.data)
 }
 

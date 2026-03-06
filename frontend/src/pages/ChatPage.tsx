@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react"
-import axios from "axios"
-import { apiUrl } from "../config"
+import { api } from "../config"
 import ChatSidebar from "../components/ChatSidebar"
 import ChatWindow, { type ReplyPayload } from "../components/ChatWindow"
 import MessageInput from "../components/MessageInput"
@@ -17,7 +16,7 @@ const loadChat = async ()=>{
 
 if(!chat) return
 
-const res = await axios.get(apiUrl(`/chat/${chat}`))
+const res = await api.get(`/chat/${chat}`)
 
 setMessages(res.data.messages)
 // Trigger sidebar refresh after loading messages
